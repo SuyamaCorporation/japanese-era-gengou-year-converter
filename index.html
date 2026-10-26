@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>日本元号 ↔ 西暦 変換ツール</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-red-50 min-h-screen p-4">
+<div class="max-w-3xl mx-auto">
+  <h1 class="text-2xl font-bold text-center text-red-800 mb-1">日本元号 ↔ 西暦 変換ツール</h1>
+  <p class="text-center text-gray-500 text-sm mb-6">令和・平成・昭和・大正・明治の双方向変換</p>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+    <!-- Gengou to Seireki -->
+    <div class="bg-white rounded-xl shadow p-5">
+      <h2 class="font-semibold text-red-700 mb-4">元号 → 西暦</h2>
+      <div class="space-y-3">
+        <div>
+          <label class="block text-sm text-gray-600 mb-1">元号を選択</label>
+          <select id="eraSelect" class="w-full border rounded px-3 py-2 text-sm">
+            <option value="reiwa">令和 (れいわ)</option>
+            <option value="heisei">平成 (へいせい)</option>
+            <option value="showa">昭和 (しょうわ)</option>
+            <option value="taisho">大正 (たいしょう)</option>
+            <option value="meiji">明治 (めいじ)</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm text-gray-600 mb-1">元号年（数字のみ）</label>
+          <input type="number" id="eraYear" placeholder="例: 6" min="1" class="w-full border rounded px-3 py-2 text-sm">
+        </div>
+        <button id="toSeireki" class="w-full bg-red-600 text-white py-2 rounded font-medium hover:bg-red-700" aria-label="西暦に変換">西暦に変換</button>
+        <div id="gengouResult" class="bg-red-50 rounded p-3 hidden">
+          <p class="text-red-800 font-semibold" id="gengouResultText"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Seireki to Gengou -->
+    <div class="bg-white rounded-xl shadow p-5">
+      <h2 class="font-semibold text-blue-700 mb-4">西暦 → 元号</h2>
+      <div class="space-y-3">
+        <div>
+          <label class="block text-sm text-gray-600 mb-1">西暦年（数字のみ）</label>
+          <input type="number" id="seirekiYear" placeholder="例: 2024" min="1868" max="2099" class="w-full border rounded px-3 py-2 text-sm">
+        </div>
+        <button id="toGengou" class="w-full bg-blue-600 text-white py-2 rounded font-medium hover:bg-blue-700" aria-label="元号に変換">元号に変換</button>
+        <div id="seirekiResult" class="bg-blue-50 rounded p-3 hidden">
+          <p class="text-blue-800 font-semibold" id="seirekiResultText"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Era table -->
+  <div class="bg-white rounded-xl shadow p-5 overflow-x-auto">
+    <h2 class="font-semibold text-gray-700 mb-3">元号一覧</h2>
+    <table class="w-full text-sm border-collapse">
+      <thead>
+        <tr class="bg-gray-50">
+          <th class="border border-gray-200 px-3 py-2 text-left">元号</th>
+          <th class="border border-gray-200 px-3 py-2">読み</th>
+          <th class="border border-gray-200 px-3 py-2">期間（西暦）</th>
+          <th class="border border-gray-200 px-3 py-2">元号年数</th>
+          <th class="border border-gray-200 px-3 py-2 text-left">天皇</th>
+          <th class="border border-gray-200 px-3 py-2 text-left">典拠</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="bg-yellow-50">
+          <td class="border border-gray-200 px-3 py-2 font-bold text-lg">令和</td>
+          <td class="border border-gray-200 px-3 py-2 text-center">れいわ</td>
+          <td class="border border-gray-200 px-3 py-2 text-center">2019〜現在</td>
+          <td class="border border-gray-200 px-3 py-2 text-center">継続中</td>
+          <td class="border border-gray-200 px-3 py-2">今上天皇（徳仁）</td>
+          <td class="border border-gray-200 px-3 py-2 text-xs text-gray-500">万葉集</td>
+        </tr>
+        <tr>
+          <td class="border border-gray-200 px-3 py-2 font-bold">平成</td>
+          <td class="border border-gray-200 px-3 py-2 text-center">へいせい</td>
+          <td class="border border-gray-200 px-3 py-2 text-center">1989〜2019</td>
+          <td class="border border-gray-200 px-3 py-2 text-center">31年</td>
+          <td class="border border-gray-200 px-3 py-2">上皇（明仁）</td>
+          <td class="border border-gray-200 px-3 py-2 text-xs text-gray-500">史記・書経</td>
+        </tr>
+        <tr class="bg-gray-50">
+          <td class="border border-gray-200 px-3 py-2 font-bold">昭和</td>
+          <td class="border border-gray-200 px-3 py-2 text-center">しょうわ</td>
+          <td class="border border-gray-200 px-3 py-2 text-center">1926〜1989</td>
+          <td class="border border-gray-200 px-3 py-2 text-center">64年</td>
+          <td class="border border-gray-200 px-3 py-2">昭和天皇（裕仁）</td>
+          <td class="border border-gray-200 px-3 py-2 text-xs text-gray-500">書経</td>
+        </tr>
+        <tr>
+          <td class="border border-gray-200 px-3 py-2 font-bold">大正</td>
+          <td class="border border-gray-200 px-3 py-2 text-center">たいしょう</td>
+          <td class="border border-gray-200 px-3 py-2 text-center">1912〜1926</td>
+          <td class="border border-gray-200 px-3 py-2 text-center">15年</td>
+          <td class="border border-gray-200 px-3 py-2">大正天皇（嘉仁）</td>
+          <td class="border border-gray-200 px-3 py-2 text-xs text-gray-500">易経</td>
+        </tr>
+        <tr class="bg-gray-50">
+          <td class="border border-gray-200 px-3 py-2 font-bold">明治</td>
+          <td class="border border-gray-200 px-3 py-2 text-center">めいじ</td>
+          <td class="border border-gray-200 px-3 py-2 text-center">1868〜1912</td>
+          <td class="border border-gray-200 px-3 py-2 text-center">45年</td>
+          <td class="border border-gray-200 px-3 py-2">明治天皇（睦仁）</td>
+          <td class="border border-gray-200 px-3 py-2 text-xs text-gray-500">易経</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+// Era definitions: start year, end year (inclusive), and offset
+const ERAS = {
+  reiwa:  { name: '令和', yomi: 'れいわ', start: 2019, end: 9999, offset: 2018, startEraYear: 1 },
+  heisei: { name: '平成', yomi: 'へいせい', start: 1989, end: 2019, offset: 1988, startEraYear: 1 },
+  showa:  { name: '昭和', yomi: 'しょうわ', start: 1926, end: 1989, offset: 1925, startEraYear: 1 },
+  taisho: { name: '大正', yomi: 'たいしょう', start: 1912, end: 1926, offset: 1911, startEraYear: 1 },
+  meiji:  { name: '明治', yomi: 'めいじ', start: 1868, end: 1912, offset: 1867, startEraYear: 1 },
+};
+
+// Exact transition notes:
+// 令和元年 = 2019年5月1日〜  （ここでは年のみ扱う)
+// 平成元年 = 1989年1月8日〜
+// ただし1月1日〜1月7日は昭和64年扱い
+// 昭和64年 = 1989年1月1日〜1月7日（year-only approximation: 1989は平成）
+// 大正元年 = 1912年7月30日〜
+// 昭和元年 = 1926年12月25日〜
+// 年のみの変換では境界年に両元号が存在するが、主要な元号を優先する
+
+document.getElementById('toSeireki').addEventListener('click', () => {
+  const eraKey = document.getElementById('eraSelect').value;
+  const eraYearRaw = document.getElementById('eraYear').value.trim();
+  const resultDiv = document.getElementById('gengouResult');
+  const resultText = document.getElementById('gengouResultText');
+
+  // Only digits allowed
+  if (!/^\d+$/.test(eraYearRaw) || eraYearRaw === '') {
+    resultDiv.classList.remove('hidden');
+    resultText.textContent = '数字のみ入力してください';
+    resultText.className = 'text-red-600 font-semibold';
+    return;
+  }
+
+  const eraYear = parseInt(eraYearRaw, 10);
+  const era = ERAS[eraKey];
+  const seireki = era.offset + eraYear;
+  const maxEraYear = era.end - era.offset;
+
+  if (eraYear < 1) {
+    resultDiv.classList.remove('hidden');
+    resultText.textContent = `${era.name}${eraYear}年は存在しません（1年〜）`;
+    resultText.className = 'text-red-600 font-semibold';
+    return;
+  }
+  if (seireki > era.end || seireki < era.start) {
+    resultDiv.classList.remove('hidden');
+    resultText.textContent = `この元号の範囲外です（${era.name}は${era.start - era.offset}年〜${era.end === 9999 ? '現在' : maxEraYear + '年'}）`;
+    resultText.className = 'text-red-600 font-semibold';
+    return;
+  }
+
+  resultDiv.classList.remove('hidden');
+  resultText.textContent = `${era.name}${eraYear}年 = 西暦 ${seireki}年`;
+  resultText.className = 'text-red-800 font-semibold text-lg';
+});
+
+document.getElementById('toGengou').addEventListener('click', () => {
+  const seirekiRaw = document.getElementById('seirekiYear').value.trim();
+  const resultDiv = document.getElementById('seirekiResult');
+  const resultText = document.getElementById('seirekiResultText');
+
+  if (!/^\d+$/.test(seirekiRaw) || seirekiRaw === '') {
+    resultDiv.classList.remove('hidden');
+    resultText.textContent = '数字のみ入力してください';
+    resultText.className = 'text-red-600 font-semibold';
+    return;
+  }
+
+  const seireki = parseInt(seirekiRaw, 10);
+  if (seireki < 1868) {
+    resultDiv.classList.remove('hidden');
+    resultText.textContent = 'この変換ツールは明治元年（1868年）以降に対応しています';
+    resultText.className = 'text-red-600 font-semibold';
+    return;
+  }
+
+  // Find matching era (prefer later era for boundary years)
+  const matches = [];
+  for (const [key, era] of Object.entries(ERAS)) {
+    if (seireki >= era.start && seireki <= (era.end === 9999 ? 9999 : era.end)) {
+      const eraYear = seireki - era.offset;
+      matches.push(`${era.name}${eraYear}年`);
+    }
+  }
+
+  resultDiv.classList.remove('hidden');
+  if (matches.length === 0) {
+    resultText.textContent = 'この元号の範囲外です（明治元年〜現在まで対応）';
+    resultText.className = 'text-red-600 font-semibold';
+  } else {
+    resultText.textContent = `西暦 ${seireki}年 = ${matches.join(' / ')}`;
+    resultText.className = 'text-blue-800 font-semibold text-lg';
+  }
+});
+</script>
+</body>
+</html>
